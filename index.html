@@ -1,653 +1,433 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<meta name="theme-color" content="#534AB7" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="My Habits" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
+<meta name="theme-color" content="#534AB7"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="My Habits"/>
 <title>My Habits</title>
-
-<!-- Inline manifest via JS (avoids needing a separate manifest.json) -->
 <script>
-const manifestData = {
-  name: "My Habits",
-  short_name: "Habits",
-  start_url: "./",
-  display: "standalone",
-  background_color: "#ffffff",
-  theme_color: "#534AB7",
-  icons: [
-    { src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='32' fill='%23534AB7'/><text y='130' x='96' text-anchor='middle' font-size='110'>✅</text></svg>", sizes: "192x192", type: "image/svg+xml" },
-    { src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='80' fill='%23534AB7'/><text y='360' x='256' text-anchor='middle' font-size='300'>✅</text></svg>", sizes: "512x512", type: "image/svg+xml" }
-  ]
-};
-const blob = new Blob([JSON.stringify(manifestData)], {type:'application/json'});
-const manifestURL = URL.createObjectURL(blob);
-document.write('<link rel="manifest" href="' + manifestURL + '">');
+const manifestData={name:"My Habits",short_name:"Habits",start_url:"./",display:"standalone",background_color:"#ffffff",theme_color:"#534AB7",icons:[{src:"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='32' fill='%23534AB7'/><text y='130' x='96' text-anchor='middle' font-size='110'>checkmark</text></svg>",sizes:"192x192",type:"image/svg+xml"}]};
+const blob=new Blob([JSON.stringify(manifestData)],{type:"application/json"});
+document.write('<link rel="manifest" href="'+URL.createObjectURL(blob)+'">');
 </script>
-
 <style>
-:root {
-  --purple: #534AB7;
-  --purple-light: #EEEDFE;
-  --purple-dark: #3C3489;
-  --green: #1D9E75;
-  --green-light: #E1F5EE;
-  --amber-light: #FAEEDA;
-  --amber-dark: #633806;
-  --red: #E24B4A;
-  --bg: #f7f7f9;
-  --card: #ffffff;
-  --text: #1a1a1a;
-  --text-muted: #6b6b6b;
-  --text-hint: #aaaaaa;
-  --border: rgba(0,0,0,0.10);
-  --border-strong: rgba(0,0,0,0.18);
-  --radius-md: 10px;
-  --radius-lg: 14px;
-  --safe-top: env(safe-area-inset-top, 0px);
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
+:root{
+  --purple:#534AB7;--purple-light:#EEEDFE;--purple-dark:#3C3489;
+  --green:#1D9E75;--green-light:#E1F5EE;
+  --amber-bg:#FAEEDA;--amber-text:#633806;
+  --red:#A32D2D;--red-bg:#FCEBEB;
+  --bg:#f5f5f7;--card:#fff;--text:#1a1a1a;
+  --muted:#6b6b6b;--hint:#aaa;
+  --border:rgba(0,0,0,0.10);--border-strong:rgba(0,0,0,0.18);
+  --rm:10px;--rl:14px;
+  --sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);
 }
+@media(prefers-color-scheme:dark){:root{
+  --bg:#111113;--card:#1c1c1f;--text:#f0f0f0;--muted:#999;--hint:#555;
+  --border:rgba(255,255,255,0.10);--border-strong:rgba(255,255,255,0.20);
+  --purple-light:#26215C;--green-light:#04342C;--amber-bg:#412402;--red-bg:#501313;
+}}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-top:var(--sat)}
+.app{max-width:430px;margin:0 auto;padding-bottom:calc(90px + var(--sab))}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #111113;
-    --card: #1c1c1f;
-    --text: #f0f0f0;
-    --text-muted: #999;
-    --text-hint: #555;
-    --border: rgba(255,255,255,0.10);
-    --border-strong: rgba(255,255,255,0.20);
-    --purple-light: #26215C;
-    --green-light: #04342C;
-    --amber-light: #412402;
-  }
-}
+.login-screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;gap:24px}
+.login-screen h1{font-size:26px;font-weight:600;letter-spacing:-.4px;text-align:center}
+.login-screen p{font-size:14px;color:var(--muted);text-align:center;max-width:280px;line-height:1.5}
+.users-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;width:100%;max-width:340px}
+.user-tile{background:var(--card);border:0.5px solid var(--border);border-radius:var(--rl);padding:16px 12px;cursor:pointer;text-align:center;transition:all .15s;font-family:inherit}
+.user-tile:hover{border-color:var(--purple);background:var(--purple-light)}
+.user-tile:active{transform:scale(.97)}
+.avatar{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 8px}
+.user-tile .uname{font-size:13px;font-weight:500;color:var(--text)}
+.add-user-tile{background:none;border:1.5px dashed var(--border-strong);border-radius:var(--rl);padding:16px 12px;cursor:pointer;text-align:center;color:var(--muted);font-size:13px;font-family:inherit;transition:all .15s}
+.add-user-tile:hover{border-color:var(--purple);color:var(--purple)}
+.add-icon{font-size:28px;margin-bottom:6px;display:block}
 
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;justify-content:center;z-index:100}
+.modal{background:var(--card);border-radius:var(--rl) var(--rl) 0 0;padding:24px 20px 32px;width:100%;max-width:430px}
+.modal h2{font-size:17px;font-weight:600;margin-bottom:16px}
+.form-label{font-size:12px;color:var(--muted);font-weight:500;display:block;margin-bottom:5px}
+.form-input{width:100%;font-size:15px;padding:10px 12px;border-radius:var(--rm);border:0.5px solid var(--border-strong);background:var(--bg);color:var(--text);font-family:inherit;outline:none;margin-bottom:14px}
+.form-input:focus{border-color:var(--purple)}
+.ep-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.ep-btn{width:40px;height:40px;border-radius:var(--rm);border:0.5px solid var(--border);background:var(--bg);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.ep-btn.sel{border:1.5px solid var(--purple);background:var(--purple-light)}
+.cp-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.cp-btn{width:30px;height:30px;border-radius:50%;cursor:pointer;border:2px solid transparent}
+.cp-btn.sel{border-color:var(--text)}
+.btn-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{padding:11px;border-radius:var(--rm);border:none;font-size:15px;font-weight:500;font-family:inherit;cursor:pointer}
+.btn-primary{background:var(--purple);color:#fff}
+.btn-secondary{background:var(--bg);border:0.5px solid var(--border-strong);color:var(--text)}
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  padding-top: var(--safe-top);
-  padding-bottom: calc(80px + var(--safe-bottom));
-}
+.header{padding:14px 20px 12px;background:var(--card);border-bottom:0.5px solid var(--border);position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:10px}
+.header-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.header-info{flex:1;min-width:0}
+.header-info h1{font-size:17px;font-weight:600}
+.header-info p{font-size:12px;color:var(--muted);margin-top:1px}
+.switch-btn{padding:6px 12px;border-radius:20px;border:0.5px solid var(--border-strong);background:var(--bg);font-size:12px;font-weight:500;cursor:pointer;color:var(--text);font-family:inherit}
 
-.app { max-width: 430px; margin: 0 auto; }
+.tabs{display:flex;background:var(--card);border-bottom:0.5px solid var(--border);padding:0 20px}
+.tab{flex:1;padding:10px 0;font-size:13px;font-weight:500;color:var(--muted);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;font-family:inherit}
+.tab.active{color:var(--purple);border-bottom-color:var(--purple)}
 
-/* Header */
-.header {
-  padding: 20px 20px 14px;
-  background: var(--card);
-  border-bottom: 0.5px solid var(--border);
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
-.header h1 { font-size: 22px; font-weight: 600; letter-spacing: -0.3px; }
-.header p { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+.date-bar{display:flex;gap:6px;padding:12px 20px;overflow-x:auto;scrollbar-width:none;background:var(--card);border-bottom:0.5px solid var(--border)}
+.date-bar::-webkit-scrollbar{display:none}
+.day-btn{flex:0 0 44px;height:60px;border-radius:var(--rm);border:0.5px solid var(--border);background:var(--bg);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-family:inherit}
+.day-btn.sel{border:1.5px solid var(--purple);background:var(--purple-light)}
+.wd{font-size:10px;color:var(--muted);font-weight:500}
+.dd{font-size:15px;font-weight:600;color:var(--text)}
+.day-btn.sel .wd,.day-btn.sel .dd{color:var(--purple-dark)}
+.day-btn.has-done .dd::after{content:'·';display:block;font-size:18px;line-height:0;margin-top:4px;color:var(--green)}
 
-/* Date bar */
-.date-bar {
-  display: flex;
-  gap: 6px;
-  padding: 14px 20px;
-  overflow-x: auto;
-  scrollbar-width: none;
-  background: var(--card);
-  border-bottom: 0.5px solid var(--border);
-}
-.date-bar::-webkit-scrollbar { display: none; }
-.day-btn {
-  flex: 0 0 46px;
-  height: 62px;
-  border-radius: var(--radius-md);
-  border: 0.5px solid var(--border);
-  background: var(--bg);
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 3px;
-  transition: all .15s;
-}
-.day-btn.selected { border: 1.5px solid var(--purple); background: var(--purple-light); }
-.day-btn.has-completions::after {
-  content: '';
-  width: 5px; height: 5px;
-  border-radius: 50%;
-  background: var(--green);
-  display: block;
-  margin-top: 1px;
-}
-.wd { font-size: 10px; color: var(--text-muted); font-weight: 500; }
-.dd { font-size: 16px; font-weight: 600; color: var(--text); }
-.day-btn.selected .wd,
-.day-btn.selected .dd { color: var(--purple-dark); }
+.section{padding:14px 20px 0}
+.section-title{font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px}
+.stats-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.stat-card{background:var(--card);border:0.5px solid var(--border);border-radius:var(--rm);padding:13px}
+.stat-label{font-size:12px;color:var(--muted);margin-bottom:3px}
+.stat-val{font-size:22px;font-weight:600}
+.stat-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.rate-wrap{background:var(--card);border:0.5px solid var(--border);border-radius:var(--rm);padding:13px;margin-bottom:4px}
+.rate-top{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px}
+.rate-bg{height:6px;border-radius:3px;background:var(--border)}
+.rate-fill{height:100%;border-radius:3px;background:var(--green)}
 
-/* Stats */
-.section { padding: 16px 20px 0; }
-.section-title {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: .07em;
-  margin-bottom: 10px;
-}
-.stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 4px; }
-.stat-card {
-  background: var(--card);
-  border-radius: var(--radius-md);
-  border: 0.5px solid var(--border);
-  padding: 14px;
-}
-.stat-label { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
-.stat-val { font-size: 24px; font-weight: 600; }
-.stat-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.habit-card{background:var(--card);border:0.5px solid var(--border);border-radius:var(--rl);padding:14px;margin-bottom:10px}
+.habit-top{display:flex;align-items:center;gap:10px}
+.habit-icon{width:38px;height:38px;border-radius:var(--rm);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+.habit-info{flex:1;min-width:0}
+.habit-name{font-size:15px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.habit-meta{font-size:12px;color:var(--muted);margin-top:2px}
+.streak-badge{display:inline-flex;align-items:center;gap:2px;background:var(--amber-bg);color:var(--amber-text);font-size:11px;font-weight:600;padding:2px 7px;border-radius:20px}
+.check-btn{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--border-strong);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.check-btn.done{background:var(--green);border-color:var(--green)}
+.check-btn svg{stroke:var(--muted);fill:none;width:17px;height:17px;stroke-width:2.5}
+.check-btn.done svg{stroke:#fff}
+.habit-dots{display:flex;gap:4px;margin-top:11px;padding-top:11px;border-top:0.5px solid var(--border)}
+.dot{flex:1;height:7px;border-radius:4px;background:var(--border)}
+.dot.d-done{background:var(--green)}
+.dot.d-sel{outline:1.5px solid var(--purple);outline-offset:1px}
+.habit-footer{display:flex;align-items:center;gap:8px;margin-top:10px;padding-top:10px;border-top:0.5px solid var(--border)}
+.remark-input{flex:1;font-size:13px;color:var(--text);background:var(--bg);border:0.5px solid var(--border);border-radius:var(--rm);padding:7px 10px;outline:none;font-family:inherit}
+.remark-input:focus{border-color:var(--purple)}
+.remark-input::placeholder{color:var(--hint)}
+.del-btn{background:none;border:none;cursor:pointer;padding:5px;color:var(--hint);font-size:15px;border-radius:var(--rm);flex-shrink:0}
+.del-btn:hover{color:var(--red)}
+.empty{text-align:center;padding:32px 20px;color:var(--muted);font-size:14px;background:var(--card);border-radius:var(--rl);border:0.5px solid var(--border)}
+.empty small{display:block;margin-top:5px;color:var(--hint);font-size:12px}
 
-/* Habits */
-.habit-card {
-  background: var(--card);
-  border: 0.5px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 14px;
-  margin-bottom: 10px;
-}
-.habit-top { display: flex; align-items: center; gap: 12px; }
-.habit-icon {
-  width: 40px; height: 40px;
-  border-radius: var(--radius-md);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 20px;
-  flex-shrink: 0;
-}
-.habit-info { flex: 1; min-width: 0; }
-.habit-name { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.habit-meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; display: flex; align-items: center; gap: 6px; }
-.streak-badge {
-  display: inline-flex; align-items: center; gap: 2px;
-  background: var(--amber-light);
-  color: var(--amber-dark);
-  font-size: 11px; font-weight: 600;
-  padding: 2px 7px;
-  border-radius: 20px;
-}
-.check-btn {
-  width: 38px; height: 38px;
-  border-radius: 50%;
-  border: 1.5px solid var(--border-strong);
-  background: transparent;
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-  transition: all .2s;
-}
-.check-btn.done { background: var(--green); border-color: var(--green); }
-.check-btn svg { stroke: var(--text-muted); fill: none; width: 18px; height: 18px; stroke-width: 2.5; }
-.check-btn.done svg { stroke: #fff; }
+.add-section{padding:0 20px}
+.toggle-add-btn{display:flex;align-items:center;gap:8px;width:100%;padding:14px 0;background:none;border:none;cursor:pointer;color:var(--purple);font-size:14px;font-weight:500;font-family:inherit}
+.toggle-add-btn svg{width:18px;height:18px;stroke:var(--purple);fill:none;stroke-width:2}
+.add-form-box{background:var(--card);border:0.5px solid var(--border);border-radius:var(--rl);padding:16px;margin-bottom:10px}
+.add-form-box h3{font-size:14px;font-weight:600;margin-bottom:14px}
+.form-row{margin-bottom:12px}
+.fi{width:100%;font-size:15px;padding:9px 12px;border-radius:var(--rm);border:0.5px solid var(--border-strong);background:var(--bg);color:var(--text);font-family:inherit;outline:none}
+.fi:focus{border-color:var(--purple)}
+.emoji-grid{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.e-opt{width:38px;height:38px;border-radius:var(--rm);border:0.5px solid var(--border);background:var(--bg);cursor:pointer;font-size:19px;display:flex;align-items:center;justify-content:center}
+.e-opt.sel{border:1.5px solid var(--purple);background:var(--purple-light)}
+.c-grid{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.c-opt{width:28px;height:28px;border-radius:50%;cursor:pointer;border:2px solid transparent}
+.c-opt.sel{border-color:var(--text)}
+.add-btn{width:100%;padding:11px;border-radius:var(--rm);border:none;background:var(--purple);color:#fff;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit;margin-top:4px}
 
-/* Dots */
-.habit-dots {
-  display: flex; gap: 5px;
-  margin-top: 12px; padding-top: 12px;
-  border-top: 0.5px solid var(--border);
-}
-.dot {
-  flex: 1; height: 8px;
-  border-radius: 4px;
-  background: var(--border);
-  transition: background .2s;
-}
-.dot.done-dot { background: var(--green); }
-.dot.selected-dot { background: var(--border-strong); outline: 1.5px solid var(--purple); outline-offset: 1px; }
-
-/* Remark */
-.habit-footer {
-  display: flex; align-items: center;
-  margin-top: 10px; padding-top: 10px;
-  border-top: 0.5px solid var(--border);
-  gap: 8px;
-}
-.remark-input {
-  flex: 1;
-  font-size: 13px;
-  color: var(--text);
-  background: var(--bg);
-  border: 0.5px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 7px 10px;
-  outline: none;
-  font-family: inherit;
-  transition: border .15s;
-}
-.remark-input:focus { border-color: var(--purple); }
-.remark-input::placeholder { color: var(--text-hint); }
-.delete-btn {
-  background: none; border: none;
-  cursor: pointer; padding: 6px;
-  color: var(--text-hint);
-  font-size: 16px;
-  border-radius: var(--radius-md);
-  transition: all .15s;
-  flex-shrink: 0;
-}
-.delete-btn:hover { color: var(--red); background: rgba(226,75,74,0.08); }
-
-/* Add form */
-.add-section { padding: 0 20px; }
-.toggle-add-btn {
-  display: flex; align-items: center; gap: 8px;
-  width: 100%; padding: 14px 0;
-  background: none; border: none;
-  cursor: pointer;
-  color: var(--purple);
-  font-size: 15px; font-weight: 600;
-  font-family: inherit;
-}
-.toggle-add-btn svg { width: 20px; height: 20px; stroke: var(--purple); fill: none; stroke-width: 2; }
-.add-form {
-  background: var(--card);
-  border: 0.5px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 16px;
-  margin-bottom: 10px;
-}
-.add-form h3 { font-size: 15px; font-weight: 600; margin-bottom: 14px; }
-.form-row { margin-bottom: 12px; }
-.form-label { font-size: 12px; color: var(--text-muted); font-weight: 500; display: block; margin-bottom: 5px; }
-.form-input {
-  width: 100%;
-  font-size: 15px;
-  padding: 10px 12px;
-  border-radius: var(--radius-md);
-  border: 0.5px solid var(--border-strong);
-  background: var(--bg);
-  color: var(--text);
-  font-family: inherit;
-  outline: none;
-}
-.form-input:focus { border-color: var(--purple); }
-.emoji-grid { display: flex; flex-wrap: wrap; gap: 6px; }
-.emoji-opt {
-  width: 40px; height: 40px;
-  border-radius: var(--radius-md);
-  border: 0.5px solid var(--border);
-  background: var(--bg);
-  cursor: pointer; font-size: 20px;
-  display: flex; align-items: center; justify-content: center;
-  transition: all .1s;
-}
-.emoji-opt.selected { border: 1.5px solid var(--purple); background: var(--purple-light); }
-.color-grid { display: flex; gap: 10px; flex-wrap: wrap; }
-.color-opt {
-  width: 32px; height: 32px;
-  border-radius: 50%;
-  cursor: pointer;
-  border: 2px solid transparent;
-  transition: border .1s;
-}
-.color-opt.selected { border-color: var(--text); }
-.add-btn {
-  width: 100%; padding: 12px;
-  border-radius: var(--radius-md);
-  border: none;
-  background: var(--purple);
-  color: #fff;
-  font-size: 15px; font-weight: 600;
-  cursor: pointer;
-  font-family: inherit;
-  transition: background .15s;
-}
-.add-btn:hover { background: var(--purple-dark); }
-.add-btn:active { transform: scale(0.98); }
-
-/* Empty state */
-.empty {
-  text-align: center;
-  padding: 36px 20px;
-  color: var(--text-muted);
-  font-size: 15px;
-  background: var(--card);
-  border-radius: var(--radius-lg);
-  border: 0.5px solid var(--border);
-}
-.empty p { margin-top: 6px; font-size: 13px; color: var(--text-hint); }
-
-/* Completion rate bar */
-.rate-bar-wrap { margin-top: 10px; }
-.rate-bar-bg {
-  height: 6px; border-radius: 3px;
-  background: var(--border);
-  overflow: hidden;
-}
-.rate-bar-fill {
-  height: 100%; border-radius: 3px;
-  background: var(--green);
-  transition: width .4s ease;
-}
-.rate-label { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; display: flex; justify-content: space-between; }
+.friend-card{background:var(--card);border:0.5px solid var(--border);border-radius:var(--rl);padding:14px;margin-bottom:10px}
+.friend-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.friend-av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.friend-name{font-size:15px;font-weight:500}
+.friend-stat{font-size:12px;color:var(--muted);margin-top:1px}
+.fh-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.fh-row:last-child{margin-bottom:0}
+.fh-icon{font-size:15px;width:24px;text-align:center;flex-shrink:0}
+.fh-name{font-size:13px;color:var(--muted);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fh-dots{display:flex;gap:3px}
+.fh-dot{width:13px;height:6px;border-radius:3px;background:var(--border)}
+.fh-dot.d{background:var(--green)}
+.fh-check{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--border-strong);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px}
+.fh-check.done{background:var(--green);border-color:var(--green);color:#fff}
+.remark-pill{display:inline-flex;background:var(--bg);border:0.5px solid var(--border);border-radius:20px;padding:3px 9px;font-size:11px;color:var(--muted);margin-top:6px;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 </style>
 </head>
 <body>
-<div class="app">
-  <div class="header">
-    <h1>My Habits</h1>
-    <p id="full-date"></p>
-  </div>
-
-  <div class="date-bar" id="date-bar"></div>
-
-  <div class="section" style="margin-top:16px">
-    <div class="section-title">Overview</div>
-    <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-label">Today</div>
-        <div class="stat-val" id="stat-today">0 / 0</div>
-        <div class="stat-sub">completed</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Best streak</div>
-        <div class="stat-val" id="stat-streak">0</div>
-        <div class="stat-sub">days in a row</div>
-      </div>
-    </div>
-    <div style="margin-top:10px;background:var(--card);border:0.5px solid var(--border);border-radius:var(--radius-md);padding:14px">
-      <div class="rate-label">
-        <span>7-day completion</span>
-        <span id="rate-pct">0%</span>
-      </div>
-      <div class="rate-bar-bg"><div class="rate-bar-fill" id="rate-bar" style="width:0%"></div></div>
-    </div>
-  </div>
-
-  <div class="section" style="margin-top:16px">
-    <div class="section-title">Habits</div>
-    <div id="habits-list"></div>
-  </div>
-
-  <div class="add-section">
-    <button class="toggle-add-btn" onclick="toggleForm()">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-      Add new habit
-    </button>
-    <div id="add-form" style="display:none">
-      <div class="add-form">
-        <h3>New habit</h3>
-        <div class="form-row">
-          <label class="form-label">Name</label>
-          <input class="form-input" id="new-name" placeholder="e.g. Morning run" maxlength="30" />
-        </div>
-        <div class="form-row">
-          <label class="form-label">Icon</label>
-          <div class="emoji-grid" id="emoji-grid"></div>
-        </div>
-        <div class="form-row">
-          <label class="form-label">Color</label>
-          <div class="color-grid" id="color-grid"></div>
-        </div>
-        <button class="add-btn" onclick="addHabit()">Add habit</button>
-      </div>
-    </div>
-  </div>
-</div>
-
+<div class="app" id="app"></div>
 <script>
-const EMOJIS = ['🏃','💧','📚','🧘','🥗','💪','🛏️','✍️','🎯','🌿','🎵','🧠','💊','🚴','🌅','🍎','🧹','💼'];
-const COLORS = [
-  {bg:'#EEEDFE',ic:'#3C3489'},
-  {bg:'#E1F5EE',ic:'#0F6E56'},
-  {bg:'#FAECE7',ic:'#993C1D'},
-  {bg:'#E6F1FB',ic:'#185FA5'},
-  {bg:'#FAEEDA',ic:'#854F0B'},
-  {bg:'#FBEAF0',ic:'#993556'},
+const EMOJIS=['🏃','💧','📚','🧘','🥗','💪','🛏️','✍️','🎯','🌿','🎵','🧠','💊','🚴','🌅','🍎','🧹','💼'];
+const AVATARS=['😀','😎','🤩','🥳','🦊','🐼','🐸','🦁','🐙','🦋','🌻','⭐','🔥','💎','🌈','🤖'];
+const COLORS=[
+  {bg:'#EEEDFE',ic:'#3C3489'},{bg:'#E1F5EE',ic:'#0F6E56'},
+  {bg:'#FAECE7',ic:'#993C1D'},{bg:'#E6F1FB',ic:'#185FA5'},
+  {bg:'#FAEEDA',ic:'#854F0B'},{bg:'#FBEAF0',ic:'#993556'},
 ];
-const DAYS = 7;
+const UCOLORS=['#534AB7','#1D9E75','#D85A30','#378ADD','#BA7517','#D4537E'];
+const DAYS=7;
 
-let selectedEmoji = EMOJIS[0];
-let selectedColor = 0;
-let selectedDay = todayKey();
+let selEmoji=EMOJIS[0],selHColor=0,selAvatar=AVATARS[0],selUColor=0;
+let selDay=todayKey(),activeTab='my',showAdd=false,showModal=false;
 
-function todayKey() {
-  return new Date().toISOString().slice(0,10);
+function todayKey(){return new Date().toISOString().slice(0,10)}
+function dateOffset(n){const d=new Date();d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)}
+
+const DB='habit_multi_v1';
+function load(){try{return JSON.parse(localStorage.getItem(DB)||'{"users":[],"habits":{},"completions":{},"remarks":{}}')}catch{return{users:[],habits:{},completions:{},remarks:{}}}}
+function save(data){localStorage.setItem(DB,JSON.stringify(data))}
+function getCurrentUser(){const uid=sessionStorage.getItem('h_uid');if(!uid)return null;const d=load();return d.users.find(u=>u.id===uid)||null}
+function setUser(uid){sessionStorage.setItem('h_uid',uid)}
+
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function escA(s){return String(s).replace(/"/g,'&quot;')}
+
+function calcStreak(data,uid,hid){
+  let s=0;const d=new Date();
+  if(!data.completions[`${todayKey()}_${uid}_${hid}`])d.setDate(d.getDate()-1);
+  const dd=new Date(d);
+  while(s<=365){const k=dd.toISOString().slice(0,10);if(data.completions[`${k}_${uid}_${hid}`]){s++;dd.setDate(dd.getDate()-1);}else break;}
+  return s;
+}
+function calcRate(data,uid){
+  const habits=data.habits[uid]||[];if(!habits.length)return 0;
+  let done=0,total=0;
+  for(let i=-(DAYS-1);i<=0;i++){const k=dateOffset(i);habits.forEach(h=>{total++;if(data.completions[`${k}_${uid}_${h.id}`])done++;});}
+  return total?Math.round((done/total)*100):0;
 }
 
-function dateKey(offset) {
-  const d = new Date();
-  d.setDate(d.getDate() + offset);
-  return d.toISOString().slice(0,10);
-}
-
-function loadData() {
-  try { return JSON.parse(localStorage.getItem('habit_tracker_v1') || '{"habits":[],"completions":{},"remarks":{}}'); }
-  catch { return {habits:[],completions:{},remarks:{}}; }
-}
-
-function saveData(data) {
-  localStorage.setItem('habit_tracker_v1', JSON.stringify(data));
-}
-
-function buildDateBar() {
-  const bar = document.getElementById('date-bar');
-  bar.innerHTML = '';
-  const data = loadData();
-  const wds = ['Su','Mo','Tu','We','Th','Fr','Sa'];
-  for (let i = -(DAYS-1); i <= 0; i++) {
-    const d = new Date(); d.setDate(d.getDate() + i);
-    const key = d.toISOString().slice(0,10);
-    const hasAny = data.habits.some(h => data.completions[`${key}_${h.id}`]);
-    const btn = document.createElement('button');
-    btn.className = 'day-btn' + (key === selectedDay ? ' selected' : '') + (hasAny ? ' has-completions' : '');
-    btn.innerHTML = `<span class="wd">${wds[d.getDay()]}</span><span class="dd">${d.getDate()}</span>`;
-    btn.onclick = () => { selectedDay = key; render(); };
-    bar.appendChild(btn);
+function render(){
+  const user=getCurrentUser();
+  const app=document.getElementById('app');
+  if(!user){renderLogin(app);return;}
+  let html='';
+  html+=header(user);
+  html+=tabs();
+  if(activeTab==='my'){
+    html+=dateBar(user);
+    html+=`<div class="section" style="margin-top:14px"><div class="section-title">Overview</div>${stats(user)}</div>`;
+    html+=`<div class="section" style="margin-top:14px"><div class="section-title">My habits</div>${myHabits(user)}</div>`;
+    html+=addSection();
+  } else {
+    html+=`<div class="section" style="margin-top:14px"><div class="section-title">Friends' progress</div>${friendsView(user)}</div>`;
   }
-  const fp = document.getElementById('full-date');
-  const sd = new Date(selectedDay + 'T12:00:00');
-  fp.textContent = sd.toLocaleDateString('en-DE', {weekday:'long', day:'numeric', month:'long'});
+  app.innerHTML=html;
+  if(showModal){const m=buildModal();app.appendChild(m);}
 }
 
-function buildEmojiGrid() {
-  const g = document.getElementById('emoji-grid');
-  g.innerHTML = '';
-  EMOJIS.forEach(e => {
-    const b = document.createElement('button');
-    b.className = 'emoji-opt' + (e === selectedEmoji ? ' selected' : '');
-    b.textContent = e;
-    b.onclick = () => { selectedEmoji = e; buildEmojiGrid(); };
-    g.appendChild(b);
-  });
+function renderLogin(app){
+  const data=load();
+  let tiles=data.users.map(u=>`<button class="user-tile" onclick="loginAs('${u.id}')">
+    <div class="avatar" style="background:${u.color}22;color:${u.color}">${u.avatar}</div>
+    <div class="uname">${esc(u.name)}</div>
+  </button>`).join('');
+  tiles+=`<button class="add-user-tile" onclick="openModal()"><span class="add-icon">＋</span>New user</button>`;
+  app.innerHTML=`<div class="login-screen">
+    <div><h1>My Habits</h1><p>Pick your profile to continue</p></div>
+    <div class="users-grid">${tiles}</div>
+  </div>`;
+  if(showModal)app.appendChild(buildModal());
 }
 
-function buildColorGrid() {
-  const g = document.getElementById('color-grid');
-  g.innerHTML = '';
-  COLORS.forEach((c, i) => {
-    const b = document.createElement('button');
-    b.className = 'color-opt' + (i === selectedColor ? ' selected' : '');
-    b.style.background = c.bg;
-    b.onclick = () => { selectedColor = i; buildColorGrid(); };
-    g.appendChild(b);
-  });
+function header(user){
+  return`<div class="header">
+    <div class="header-av" style="background:${user.color}22;color:${user.color}">${user.avatar}</div>
+    <div class="header-info"><h1>${esc(user.name)}</h1><p id="hdate"></p></div>
+    <button class="switch-btn" onclick="switchUser()">Switch</button>
+  </div>`;
 }
-
-function calcStreak(data, hid) {
-  let streak = 0;
-  const d = new Date();
-  const todayDone = !!(data.completions[`${todayKey()}_${hid}`]);
-  if (!todayDone) d.setDate(d.getDate() - 1);
-  const dd = new Date(d);
-  while (true) {
-    const k = dd.toISOString().slice(0,10);
-    if (data.completions[`${k}_${hid}`]) { streak++; dd.setDate(dd.getDate() - 1); }
-    else break;
-    if (streak > 365) break;
+function tabs(){
+  return`<div class="tabs">
+    <button class="tab${activeTab==='my'?' active':''}" onclick="activeTab='my';render()">My Habits</button>
+    <button class="tab${activeTab==='friends'?' active':''}" onclick="activeTab='friends';render()">Friends</button>
+  </div>`;
+}
+function dateBar(user){
+  const data=load();
+  const wds=['Su','Mo','Tu','We','Th','Fr','Sa'];
+  let html=`<div class="date-bar">`;
+  for(let i=-(DAYS-1);i<=0;i++){
+    const d=new Date();d.setDate(d.getDate()+i);
+    const k=d.toISOString().slice(0,10);
+    const has=(data.habits[user.id]||[]).some(h=>data.completions[`${k}_${user.id}_${h.id}`]);
+    html+=`<button class="day-btn${k===selDay?' sel':''}${has?' has-done':''}" onclick="selDay='${k}';render()">
+      <span class="wd">${wds[d.getDay()]}</span><span class="dd">${d.getDate()}</span>
+    </button>`;
   }
-  return streak;
+  html+=`</div>`;
+  setTimeout(()=>{const el=document.getElementById('hdate');if(el){const sd=new Date(selDay+'T12:00:00');el.textContent=sd.toLocaleDateString('en-DE',{weekday:'long',day:'numeric',month:'long'});}},0);
+  return html;
 }
-
-function calcBestStreak(data) {
-  return data.habits.reduce((best, h) => Math.max(best, calcStreak(data, h.id)), 0);
+function stats(user){
+  const data=load();
+  const habits=data.habits[user.id]||[];
+  const total=habits.length;
+  const done=habits.filter(h=>data.completions[`${selDay}_${user.id}_${h.id}`]).length;
+  const best=habits.reduce((b,h)=>Math.max(b,calcStreak(data,user.id,h.id)),0);
+  const rate=calcRate(data,user.id);
+  return`<div class="stats-row">
+    <div class="stat-card"><div class="stat-label">Today</div><div class="stat-val">${done}/${total}</div><div class="stat-sub">completed</div></div>
+    <div class="stat-card"><div class="stat-label">Best streak</div><div class="stat-val">${best}</div><div class="stat-sub">days in a row</div></div>
+  </div>
+  <div class="rate-wrap">
+    <div class="rate-top"><span>7-day completion</span><span>${rate}%</span></div>
+    <div class="rate-bg"><div class="rate-fill" style="width:${rate}%"></div></div>
+  </div>`;
 }
-
-function calc7DayRate(data) {
-  if (!data.habits.length) return 0;
-  let done = 0, total = 0;
-  for (let i = -(DAYS-1); i <= 0; i++) {
-    const d = new Date(); d.setDate(d.getDate() + i);
-    const key = d.toISOString().slice(0,10);
-    data.habits.forEach(h => {
-      total++;
-      if (data.completions[`${key}_${h.id}`]) done++;
-    });
-  }
-  return total ? Math.round((done / total) * 100) : 0;
-}
-
-function renderHabits() {
-  const data = loadData();
-  const list = document.getElementById('habits-list');
-  list.innerHTML = '';
-  if (!data.habits.length) {
-    list.innerHTML = '<div class="empty">No habits yet<p>Tap "Add new habit" below to get started</p></div>';
-    return;
-  }
-  data.habits.forEach(h => {
-    const ck = `${selectedDay}_${h.id}`;
-    const done = !!(data.completions[ck]);
-    const col = COLORS[h.colorIdx] || COLORS[0];
-    const streak = calcStreak(data, h.id);
-    const remarkVal = (data.remarks[ck] || '');
-
-    let dotsHtml = '';
-    for (let i = -(DAYS-1); i <= 0; i++) {
-      const dk = new Date(); dk.setDate(dk.getDate() + i);
-      const dkey = dk.toISOString().slice(0,10);
-      const isDone = !!(data.completions[`${dkey}_${h.id}`]);
-      const isSel = dkey === selectedDay;
-      dotsHtml += `<div class="dot${isDone ? ' done-dot' : (isSel && !isDone ? ' selected-dot' : '')}"></div>`;
+function myHabits(user){
+  const data=load();
+  const habits=data.habits[user.id]||[];
+  if(!habits.length)return`<div class="empty">No habits yet<small>Add your first habit below</small></div>`;
+  return habits.map(h=>{
+    const ck=`${selDay}_${user.id}_${h.id}`;
+    const done=!!data.completions[ck];
+    const col=COLORS[h.colorIdx]||COLORS[0];
+    const streak=calcStreak(data,user.id,h.id);
+    const remark=data.remarks[ck]||'';
+    let dots='';
+    for(let i=-(DAYS-1);i<=0;i++){
+      const k=dateOffset(i);
+      const isDone=!!data.completions[`${k}_${user.id}_${h.id}`];
+      const isSel=k===selDay;
+      dots+=`<div class="dot${isDone?' d-done':(isSel&&!isDone?' d-sel':'')}"></div>`;
     }
-
-    const card = document.createElement('div');
-    card.className = 'habit-card';
-    card.innerHTML = `
+    return`<div class="habit-card">
       <div class="habit-top">
         <div class="habit-icon" style="background:${col.bg};color:${col.ic}">${h.emoji}</div>
         <div class="habit-info">
-          <div class="habit-name">${escHtml(h.name)}</div>
-          <div class="habit-meta">${streak > 0 ? `<span class="streak-badge">🔥 ${streak} day streak</span>` : 'No streak yet'}</div>
+          <div class="habit-name">${esc(h.name)}</div>
+          <div class="habit-meta">${streak>0?`<span class="streak-badge">🔥 ${streak} day streak</span>`:'No streak yet'}</div>
         </div>
-        <button class="check-btn${done ? ' done' : ''}" onclick="toggleHabit('${h.id}')">
+        <button class="check-btn${done?' done':''}" onclick="toggleHabit('${h.id}')">
           <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
         </button>
       </div>
-      <div class="habit-dots">${dotsHtml}</div>
+      <div class="habit-dots">${dots}</div>
       <div class="habit-footer">
-        <input class="remark-input" placeholder="Add a remark for today…" value="${escAttr(remarkVal)}" onchange="saveRemark('${h.id}', this.value)" />
-        <button class="delete-btn" onclick="deleteHabit('${h.id}')" title="Remove habit">✕</button>
+        <input class="remark-input" placeholder="Add a remark for today…" value="${escA(remark)}" onchange="saveRemark('${h.id}',this.value)"/>
+        <button class="del-btn" onclick="deleteHabit('${h.id}')">✕</button>
       </div>
-    `;
-    list.appendChild(card);
-  });
+    </div>`;
+  }).join('');
+}
+function addSection(){
+  let html=`<div class="add-section"><button class="toggle-add-btn" onclick="showAdd=!showAdd;render()">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+    Add new habit
+  </button>`;
+  if(showAdd){
+    const eOpts=EMOJIS.map(e=>`<button class="e-opt${e===selEmoji?' sel':''}" onclick="selEmoji='${e}';render()">${e}</button>`).join('');
+    const cOpts=COLORS.map((c,i)=>`<button class="c-opt${i===selHColor?' sel':''}" style="background:${c.bg}" onclick="selHColor=${i};render()"></button>`).join('');
+    html+=`<div class="add-form-box"><h3>New habit</h3>
+      <div class="form-row"><label class="form-label">Name</label><input class="fi" id="new-name" placeholder="e.g. Morning run" maxlength="30"/></div>
+      <div class="form-row"><label class="form-label">Icon</label><div class="emoji-grid">${eOpts}</div></div>
+      <div class="form-row"><label class="form-label">Color</label><div class="c-grid">${cOpts}</div></div>
+      <button class="add-btn" onclick="addHabit()">Add habit</button>
+    </div>`;
+  }
+  return html+`</div>`;
+}
+function friendsView(user){
+  const data=load();
+  const others=data.users.filter(u=>u.id!==user.id);
+  if(!others.length)return`<div class="empty">No other users yet<small>Others need to open this link and create their profile</small></div>`;
+  return others.map(u=>{
+    const habits=data.habits[u.id]||[];
+    const rate=calcRate(data,u.id);
+    const todayDone=habits.filter(h=>data.completions[`${todayKey()}_${u.id}_${h.id}`]).length;
+    const rows=habits.map(h=>{
+      const done=!!data.completions[`${todayKey()}_${u.id}_${h.id}`];
+      const ck=`${selDay}_${u.id}_${h.id}`;
+      const remark=data.remarks[ck]||'';
+      let dots='';
+      for(let i=-(DAYS-1);i<=0;i++){const k=dateOffset(i);dots+=`<div class="fh-dot${data.completions[`${k}_${u.id}_${h.id}`]?' d':''}"></div>`;}
+      return`<div class="fh-row">
+        <span class="fh-icon">${h.emoji}</span>
+        <span class="fh-name">${esc(h.name)}</span>
+        <div class="fh-dots">${dots}</div>
+        <div class="fh-check${done?' done':''}">${done?'✓':''}</div>
+      </div>${remark?`<div class="remark-pill">💬 ${esc(remark)}</div>`:''}`;
+    }).join('');
+    return`<div class="friend-card">
+      <div class="friend-head">
+        <div class="friend-av" style="background:${u.color}22;color:${u.color}">${u.avatar}</div>
+        <div><div class="friend-name">${esc(u.name)}</div><div class="friend-stat">${todayDone}/${habits.length} today · ${rate}% this week</div></div>
+      </div>
+      ${habits.length?rows:`<div style="font-size:13px;color:var(--hint)">No habits added yet</div>`}
+    </div>`;
+  }).join('');
+}
+function buildModal(){
+  const aOpts=AVATARS.map(a=>`<button class="ep-btn${a===selAvatar?' sel':''}" onclick="selAvatar='${a}';rebuildModal()">${a}</button>`).join('');
+  const cOpts=UCOLORS.map((c,i)=>`<button class="cp-btn${i===selUColor?' sel':''}" style="background:${c}" onclick="selUColor=${i};rebuildModal()"></button>`).join('');
+  const div=document.createElement('div');
+  div.className='modal-bg';div.id='modal-bg';
+  div.innerHTML=`<div class="modal">
+    <h2>Add user</h2>
+    <label class="form-label">Name</label>
+    <input class="form-input" id="modal-name" placeholder="Your name" maxlength="20"/>
+    <label class="form-label">Avatar</label>
+    <div class="ep-row" id="ap">${aOpts}</div>
+    <label class="form-label">Color</label>
+    <div class="cp-row" id="cp">${cOpts}</div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="createUser()">Create</button>
+    </div>
+  </div>`;
+  return div;
+}
+function rebuildModal(){
+  const name=document.getElementById('modal-name')?.value||'';
+  document.getElementById('modal-bg')?.remove();
+  const m=buildModal();document.getElementById('app').appendChild(m);
+  const ni=document.getElementById('modal-name');if(ni)ni.value=name;
 }
 
-function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function escAttr(s) { return s.replace(/"/g,'&quot;'); }
-
-function updateStats() {
-  const data = loadData();
-  const total = data.habits.length;
-  const done = data.habits.filter(h => !!(data.completions[`${selectedDay}_${h.id}`])).length;
-  document.getElementById('stat-today').textContent = `${done} / ${total}`;
-  document.getElementById('stat-streak').textContent = calcBestStreak(data);
-  const rate = calc7DayRate(data);
-  document.getElementById('rate-pct').textContent = rate + '%';
-  document.getElementById('rate-bar').style.width = rate + '%';
+function loginAs(uid){setUser(uid);activeTab='my';render()}
+function switchUser(){sessionStorage.removeItem('h_uid');render()}
+function openModal(){showModal=true;render()}
+function closeModal(){showModal=false;render()}
+function createUser(){
+  const name=(document.getElementById('modal-name')?.value||'').trim();
+  if(!name)return;
+  const data=load();
+  const user={id:Date.now().toString(),name,avatar:selAvatar,color:UCOLORS[selUColor]};
+  data.users.push(user);save(data);
+  showModal=false;setUser(user.id);activeTab='my';render();
+}
+function toggleHabit(hid){
+  const user=getCurrentUser();if(!user)return;
+  const data=load();const ck=`${selDay}_${user.id}_${hid}`;
+  if(data.completions[ck])delete data.completions[ck];else data.completions[ck]=1;
+  save(data);render();
+}
+function saveRemark(hid,val){
+  const user=getCurrentUser();if(!user)return;
+  const data=load();const ck=`${selDay}_${user.id}_${hid}`;
+  if(val.trim())data.remarks[ck]=val.trim();else delete data.remarks[ck];
+  save(data);
+}
+function deleteHabit(hid){
+  if(!confirm('Remove this habit?'))return;
+  const user=getCurrentUser();if(!user)return;
+  const data=load();data.habits[user.id]=(data.habits[user.id]||[]).filter(h=>h.id!==hid);
+  save(data);render();
+}
+function addHabit(){
+  const name=(document.getElementById('new-name')?.value||'').trim();
+  if(!name)return;
+  const user=getCurrentUser();if(!user)return;
+  const data=load();
+  if(!data.habits[user.id])data.habits[user.id]=[];
+  data.habits[user.id].push({id:Date.now().toString(),name,emoji:selEmoji,colorIdx:selHColor});
+  save(data);showAdd=false;render();
 }
 
-function toggleHabit(hid) {
-  const data = loadData();
-  const ck = `${selectedDay}_${hid}`;
-  if (data.completions[ck]) delete data.completions[ck];
-  else data.completions[ck] = 1;
-  saveData(data);
-  render();
+if('serviceWorker' in navigator){
+  const sw=`const C='habits-v2';self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(['./','./index.html'])));self.skipWaiting();});self.addEventListener('activate',e=>{self.clients.claim();});self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request)));});`;
+  navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'application/javascript'}))).catch(()=>{});
 }
-
-function saveRemark(hid, val) {
-  const data = loadData();
-  const ck = `${selectedDay}_${hid}`;
-  if (val.trim()) data.remarks[ck] = val.trim();
-  else delete data.remarks[ck];
-  saveData(data);
-}
-
-function deleteHabit(hid) {
-  if (!confirm('Remove this habit?')) return;
-  const data = loadData();
-  data.habits = data.habits.filter(h => h.id !== hid);
-  saveData(data);
-  render();
-}
-
-function addHabit() {
-  const name = document.getElementById('new-name').value.trim();
-  if (!name) { document.getElementById('new-name').focus(); return; }
-  const data = loadData();
-  data.habits.push({ id: Date.now().toString(), name, emoji: selectedEmoji, colorIdx: selectedColor });
-  saveData(data);
-  document.getElementById('new-name').value = '';
-  toggleForm();
-  render();
-}
-
-function toggleForm() {
-  const f = document.getElementById('add-form');
-  const isHidden = f.style.display === 'none';
-  f.style.display = isHidden ? 'block' : 'none';
-}
-
-function render() {
-  buildDateBar();
-  renderHabits();
-  updateStats();
-}
-
-// Handle Enter key in name input
-document.addEventListener('DOMContentLoaded', () => {
-  const ni = document.getElementById('new-name');
-  if (ni) ni.addEventListener('keydown', e => { if (e.key === 'Enter') addHabit(); });
-});
-
-buildEmojiGrid();
-buildColorGrid();
 render();
-
-// Register service worker for offline use
-if ('serviceWorker' in navigator) {
-  const swCode = `
-const CACHE = 'habits-v1';
-self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(['./', './index.html'])));
-  self.skipWaiting();
-});
-self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))));
-  self.clients.claim();
-});
-self.addEventListener('fetch', e => {
-  e.respondWith(caches.match(e.request).then(r => r || fetch(e.request).catch(() => caches.match('./index.html'))));
-});
-  `;
-  const swBlob = new Blob([swCode], {type:'application/javascript'});
-  const swURL = URL.createObjectURL(swBlob);
-  navigator.serviceWorker.register(swURL).catch(() => {});
-}
 </script>
 </body>
 </html>
